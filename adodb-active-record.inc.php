@@ -51,7 +51,7 @@ function ADODB_SetDatabaseAdapter(&$db, $index=false)
 	global $_ADODB_ACTIVE_DBS;
 
 		foreach($_ADODB_ACTIVE_DBS as $k => $d) {
-			if (PHP_VERSION >= 5) {
+			if (5 <= PHP_VERSION) {
 				if ($d->db === $db) {
 					return $k;
 				}
@@ -66,7 +66,7 @@ function ADODB_SetDatabaseAdapter(&$db, $index=false)
 		$obj->db = $db;
 		$obj->tables = array();
 
-		if ($index == false) {
+		if (false == $index) {
 			$index = sizeof($_ADODB_ACTIVE_DBS);
 		}
 
@@ -120,7 +120,7 @@ class ADODB_Active_Record {
 	{
 	global $ADODB_ASSOC_CASE,$_ADODB_ACTIVE_DBS;
 
-		if ($db == false && is_object($pkeyarr)) {
+		if (false ==$db  && is_object($pkeyarr)) {
 			$db = $pkeyarr;
 			$pkeyarr = false;
 		}
@@ -135,7 +135,7 @@ class ADODB_Active_Record {
 		if ($db) {
 			$this->_dbat = ADODB_Active_Record::SetDatabaseAdapter($db);
 		} else if (!isset($this->_dbat)) {
-			if (sizeof($_ADODB_ACTIVE_DBS) == 0) {
+			if (0 == sizeof($_ADODB_ACTIVE_DBS)) {
 				$this->Error(
 					"No database connection set; use ADOdb_Active_Record::SetDatabaseAdapter(\$db)",
 					'ADODB_Active_Record::__constructor'
@@ -175,7 +175,7 @@ class ADODB_Active_Record {
 		case 'X':
 			return $table.'es';
 		case 'H':
-			if ($lastc2 == 'CH' || $lastc2 == 'SH') {
+			if ('CH' == $lastc2 || 'SH' ==$lastc2 ) {
 				return $table.'es';
 			}
 		default:
@@ -194,10 +194,10 @@ class ADODB_Active_Record {
 
 		$ut = strtoupper($tables);
 		$len = strlen($tables);
-		if($ut[$len-1] != 'S') {
+		if('S' != $ut[$len-1]) {
 			return $tables; // I know...forget oxen
 		}
-		if($ut[$len-2] != 'E') {
+		if('E' != $ut[$len-2]) {
 			return substr($tables, 0, $len-1);
 		}
 		switch($ut[$len-3]) {
@@ -207,7 +207,7 @@ class ADODB_Active_Record {
 			case 'I':
 				return substr($tables, 0, $len-3) . 'y';
 			case 'H';
-				if($ut[$len-4] == 'C' || $ut[$len-4] == 'S') {
+				if('C' == $ut[$len-4] || 'S' == $ut[$len-4]) {
 					return substr($tables, 0, $len-2);
 				}
 			default:
@@ -313,10 +313,10 @@ class ADODB_Active_Record {
 	{
 		$extras = array();
 		$table = $this->TableInfo();
-		if ($limit >= 0) {
+		if (0 <= $limit) {
 			$extras['limit'] = $limit;
 		}
-		if ($offset >= 0) {
+		if (0 <= $offset) {
 			$extras['offset'] = $offset;
 		}
 
@@ -426,7 +426,7 @@ class ADODB_Active_Record {
 
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
-		if ($db->fetchMode !== false) {
+		if (false !== $db->fetchMode) {
 			$savem = $db->SetFetchMode(false);
 		}
 
@@ -548,7 +548,7 @@ class ADODB_Active_Record {
 		$fn = get_class($this).'::'.$fn;
 		$this->_lasterr = $fn.': '.$err;
 
-		if ($this->_dbat < 0) {
+		if (0 > $this->_dbat) {
 			$db = false;
 		}
 		else {
@@ -575,7 +575,7 @@ class ADODB_Active_Record {
 	function ErrorMsg()
 	{
 		if (!function_exists('adodb_throw')) {
-			if ($this->_dbat < 0) {
+			if (0 > $this->_dbat) {
 				$db = false;
 			}
 			else {
@@ -606,9 +606,9 @@ class ADODB_Active_Record {
 	{
 	global $_ADODB_ACTIVE_DBS;
 
-		if ($this->_dbat < 0) {
+		if (0 > $this->_dbat) {
 			$false = false;
-			$this->Error("No database connection set: use ADOdb_Active_Record::SetDatabaseAdaptor(\$db)", "DB");
+			$this->Error("No database connection set: use ADOdb_Active_Record::SetDatabaseAdaptor(\$db)", 'DB');
 			return $false;
 		}
 		$activedb = $_ADODB_ACTIVE_DBS[$this->_dbat];
@@ -658,7 +658,7 @@ class ADODB_Active_Record {
 		if ($ACTIVE_RECORD_SAFETY && sizeof($table->flds) != sizeof($row)) {
 			# <AP>
 			$bad_size = TRUE;
-			if (sizeof($row) == 2 * sizeof($table->flds)) {
+			if (2 == sizeof($row) * sizeof($table->flds)) {
 				// Only keep string keys
 				$keys = array_filter(array_keys($row), 'is_string');
 				if (sizeof($keys) == sizeof($table->flds)) {
@@ -698,9 +698,9 @@ class ADODB_Active_Record {
 			$val = false;
 		}
 
-		if (is_null($val) || $val === false) {
+		if (is_null($val) || false === $val) {
 			// this might not work reliably in multi-user environment
-			return $db->GetOne("select max(".$fieldname.") from ".$this->_table);
+			return $db->GetOne('select max('.$fieldname.') from '.$this->_table);
 		}
 		return $val;
 	}
@@ -710,7 +710,7 @@ class ADODB_Active_Record {
 	{
 		switch($t) {
 		case 'L':
-			if (strpos($db->databaseType,'postgres') !== false) {
+			if (false !== strpos($db->databaseType,'postgres')) {
 				return $db->qstr($val);
 			}
 		case 'D':
@@ -727,7 +727,7 @@ class ADODB_Active_Record {
 			}
 
 			if (strlen($val)>0 &&
-				(strncmp($val,"'",1) != 0 || substr($val,strlen($val)-1,1) != "'")
+				(0 !=strncmp($val,"'",1)  || substr($val,strlen($val)-1,1) != "'")
 			) {
 				return $db->qstr($val);
 				break;
@@ -782,11 +782,11 @@ class ADODB_Active_Record {
 
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-		if ($db->fetchMode !== false) {
+		if (false !== $db->fetchMode) {
 			$savem = $db->SetFetchMode(false);
 		}
 
-		$qry = "select * from ".$this->_table;
+		$qry = 'select * from '.$this->_table;
 
 		if($where) {
 			$qry .= ' WHERE '.$where;
@@ -820,7 +820,7 @@ class ADODB_Active_Record {
 		$this->_original = false;
 		$vars=get_object_vars($this);
 		foreach($vars as $k=>$v){
-			if(substr($k,0,1)!=='_'){
+			if('_'!==substr($k,0,1)){
 				$this->{$k}=null;
 			}
 		}
@@ -886,7 +886,7 @@ class ADODB_Active_Record {
 					break;
 				}
 			}
-			if ($autoinc && sizeof($table->keys) == 1) {
+			if ($autoinc && 1 == sizeof($table->keys)) {
 				$k = reset($table->keys);
 				$this->$k = $this->LastInsertID($db,$k);
 			}
@@ -966,11 +966,11 @@ class ADODB_Active_Record {
 			$pkey = array($pkey);
 		}
 
-		if ($ADODB_ASSOC_CASE == 0) {
+		if (0 == $ADODB_ASSOC_CASE) {
 			foreach($pkey as $k => $v)
 				$pkey[$k] = strtolower($v);
 		}
-		elseif ($ADODB_ASSOC_CASE == 1) {
+		elseif (1 == $ADODB_ASSOC_CASE) {
 			foreach($pkey as $k => $v) {
 				$pkey[$k] = strtoupper($v);
 			}
@@ -979,7 +979,7 @@ class ADODB_Active_Record {
 		$ok = $db->Replace($this->_table,$arr,$pkey);
 		if ($ok) {
 			$this->_saved = true; // 1= update 2=insert
-			if ($ok == 2) {
+			if (2 == $ok) {
 				$autoinc = false;
 				foreach($table->keys as $k) {
 					if (is_null($this->$k)) {
@@ -987,7 +987,7 @@ class ADODB_Active_Record {
 						break;
 					}
 				}
-				if ($autoinc && sizeof($table->keys) == 1) {
+				if ($autoinc && 1 == sizeof($table->keys)) {
 					$k = reset($table->keys);
 					$this->$k = $this->LastInsertID($db,$k);
 				}
@@ -1010,7 +1010,7 @@ class ADODB_Active_Record {
 		$where = $this->GenWhere($db, $table);
 
 		if (!$where) {
-			$this->error("Where missing for table $table", "Update");
+			$this->error("Where missing for table $table", 'Update');
 			return false;
 		}
 		$valarr = array();
@@ -1033,7 +1033,7 @@ class ADODB_Active_Record {
 						continue;
 					}
 					else {
-						$this->Error("Cannot set field $name to NULL","Update");
+						$this->Error("Cannot set field $name to NULL",'Update');
 						return false;
 					}
 				}
@@ -1057,7 +1057,7 @@ class ADODB_Active_Record {
 			return -1;
 		}
 
-		$sql = 'UPDATE '.$this->_table." SET ".implode(",",$pairs)." WHERE ".$where;
+		$sql = 'UPDATE '.$this->_table.' SET '.implode(',',$pairs).' WHERE '.$where;
 		$ok = $db->Execute($sql,$valarr);
 		if ($ok) {
 			$this->_original = $neworig;
@@ -1084,7 +1084,7 @@ global $_ADODB_ACTIVE_DBS;
 
 
 	$save = $db->SetFetchMode(ADODB_FETCH_NUM);
-	$qry = "select * from ".$table;
+	$qry = 'select * from '.$table;
 
 	if (!empty($whereOrderBy)) {
 		$qry .= ' WHERE '.$whereOrderBy;
@@ -1109,7 +1109,7 @@ global $_ADODB_ACTIVE_DBS;
 
 	$false = false;
 
-	if ($rows === false) {
+	if (false === $rows) {
 		return $false;
 	}
 
